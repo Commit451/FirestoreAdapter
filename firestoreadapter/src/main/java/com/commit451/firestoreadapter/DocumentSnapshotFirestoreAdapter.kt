@@ -50,8 +50,9 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
         }
         // Dispatch the event
         for (change in documentSnapshots.documentChanges) {
-            val newIndex = change.newIndex + (queries.size - 1) * limit
-            val oldIndex = change.oldIndex + (queries.size - 1) * limit
+            val offset = queries.indexOf(documentSnapshots.query) * limit
+            val newIndex = change.newIndex + offset
+            val oldIndex = change.oldIndex + offset
             when (change.type) {
                 DocumentChange.Type.ADDED -> onDocumentAdded(change, newIndex)
                 DocumentChange.Type.MODIFIED -> onDocumentModified(change, oldIndex, newIndex)

@@ -17,9 +17,11 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     var textTitle: TextView = itemView.findViewById(R.id.text_title)
     var textSubtitle: TextView = itemView.findViewById(R.id.text_subtitle)
+    var textOther: TextView = itemView.findViewById(R.id.text_other)
 
     fun bind(state: State) {
         textTitle.text = state.name
         textSubtitle.text = state.abbreviation
+        textOther.text = state.population.toString()
     }
 }

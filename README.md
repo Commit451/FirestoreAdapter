@@ -5,7 +5,35 @@
 RecyclerView Adapter for Firebase Firestore
 
 ## Usage
-//TODO 
+Start by subclassing FirestoreAdapter:
+```kotlin
+class ItemAdapter(creator: QueryCreator) : FirestoreAdapter<State, ItemViewHolder>(State::class.java, creator) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        return ItemViewHolder.inflate(parent)
+    }
+
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        holder.bind(get(position))
+    }
+}
+```
+Usage will look like so:
+```kotlin
+val firestore = FirebaseFirestore.getInstance()
+val ref = firestore.collection("states")
+adapter = ItemAdapter({
+    ref.limit(10)
+            .orderBy("name")
+})
+
+val list = findViewById<RecyclerView>(R.id.list)
+val layoutManager = LinearLayoutManager(this)
+list.adapter = adapter
+list.layoutManager = layoutManager
+//this allows for endless scrolling
+adapter.setupOnScrollListener(list, layoutManager)
+```
 
 License
 --------
