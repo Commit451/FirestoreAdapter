@@ -128,7 +128,6 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
                 if (firstVisibleItem + visibleItemCount >= totalItemCount && !loadingMore && !hasLoadedAll) {
                     val lastVisible = snapshots.last()
                     val query = queryCreator.invoke()
-                    query.limit(limit.toLong())
                             .startAfter(lastVisible)
                     queries.add(query)
                     loadingMore = true

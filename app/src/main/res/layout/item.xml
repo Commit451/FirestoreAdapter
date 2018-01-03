@@ -30,7 +30,7 @@
             tools:text="Fahrenheit 451"/>
 
         <TextView
-            android:id="@+id/text_author"
+            android:id="@+id/text_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Ray Bradbury"/>

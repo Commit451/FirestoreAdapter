@@ -10,7 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var adapter: BookAdapter
+    private lateinit var adapter: ItemAdapter
 
     private val firestore: FirebaseFirestore by lazy {
         FirebaseFirestore.getInstance()
@@ -23,9 +23,10 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitle(R.string.app_name)
 
-        val ref = firestore.collection("books")
-        adapter = BookAdapter ({
+        val ref = firestore.collection("states")
+        adapter = ItemAdapter({
             ref.limit(10)
+                    .orderBy("name")
         })
 
         val list = findViewById<RecyclerView>(R.id.list)
