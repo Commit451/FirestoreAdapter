@@ -44,7 +44,7 @@ abstract class FirestoreAdapter<out T, VH : RecyclerView.ViewHolder>(private val
         super.clear()
     }
 
-    protected fun get(index: Int): T {
+    fun get(index: Int): T {
         return items[index]
     }
 }

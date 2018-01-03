@@ -88,7 +88,7 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
         return snapshots.size
     }
 
-    protected fun getSnapshot(index: Int): DocumentSnapshot {
+    fun getSnapshot(index: Int): DocumentSnapshot {
         return snapshots[index]
     }
 

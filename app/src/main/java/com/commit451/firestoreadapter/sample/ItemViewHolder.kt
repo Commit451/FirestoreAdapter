@@ -18,6 +18,8 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     var textTitle: TextView = itemView.findViewById(R.id.text_title)
     var textSubtitle: TextView = itemView.findViewById(R.id.text_subtitle)
     var textOther: TextView = itemView.findViewById(R.id.text_other)
+    var buttonDelete: View = itemView.findViewById(R.id.button_delete)
+    var buttonUp: View = itemView.findViewById(R.id.button_up)
 
     fun bind(state: State) {
         textTitle.text = state.name
