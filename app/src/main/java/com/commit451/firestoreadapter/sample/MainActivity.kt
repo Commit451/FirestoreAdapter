@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         adapter = ItemAdapter({
-            refStates.limit(20)
-                    .orderBy("name")
+            refStates.limit(10)
         })
 
         adapter.onDeleteListener = { position ->

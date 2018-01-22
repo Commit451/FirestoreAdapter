@@ -41,26 +41,25 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
             limit = documentSnapshots.documentChanges.size
         }
 
-        if (loadingMore) {
-            if (documentSnapshots.documentChanges.size < limit) {
-                hasLoadedAll = true
-            }
-            loadingMore = false
-            onLoadingMoreComplete?.invoke()
-        }
         // Dispatch the event
         for (change in documentSnapshots.documentChanges) {
-            val offset = queries.indexOf(documentSnapshots.query) * limit
-            val newIndex = change.newIndex + offset
-            val oldIndex = change.oldIndex + offset
             when (change.type) {
-                DocumentChange.Type.ADDED -> onDocumentAdded(change, newIndex)
-                DocumentChange.Type.MODIFIED -> onDocumentModified(change, oldIndex, newIndex)
-                DocumentChange.Type.REMOVED -> onDocumentRemoved(change, oldIndex)
+                DocumentChange.Type.ADDED -> onDocumentAdded(change)
+                DocumentChange.Type.MODIFIED -> onDocumentModified(change)
+                DocumentChange.Type.REMOVED -> onDocumentRemoved(change)
             }
         }
 
         onDataChanged()
+
+        if (documentSnapshots.isEmpty) {
+            hasLoadedAll = true
+        }
+
+        if (loadingMore) {
+            loadingMore = false
+            onLoadingMoreComplete?.invoke()
+        }
     }
 
     fun startListening() {
@@ -92,27 +91,24 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
         return snapshots[index]
     }
 
-    protected open fun onDocumentAdded(change: DocumentChange, newIndex: Int) {
-        snapshots.add(newIndex, change.document)
-        notifyItemInserted(newIndex)
+    protected open fun onDocumentAdded(change: DocumentChange) {
+        val index = snapshots.size
+        snapshots.add(index, change.document)
+        notifyItemInserted(index)
+        //sadly, we always have to add documents to the end of the list, since we cannot attempt to
+        //add to the correct index since we have multiple queries
     }
 
-    protected open fun onDocumentModified(change: DocumentChange, oldIndex: Int, newIndex: Int) {
-        if (oldIndex == newIndex) {
-            // Item changed but remained in same position
-            snapshots.set(oldIndex, change.document)
-            notifyItemChanged(oldIndex)
-        } else {
-            // Item changed and changed position
-            snapshots.removeAt(change.oldIndex)
-            snapshots.add(newIndex, change.document)
-            notifyItemMoved(oldIndex, newIndex)
-        }
+    protected open fun onDocumentModified(change: DocumentChange) {
+        val index = snapshots.indexOfFirst { it.id == change.document.id }
+        snapshots[index] = change.document
+        notifyItemChanged(index)
     }
 
-    protected open fun onDocumentRemoved(change: DocumentChange, oldIndex: Int) {
-        snapshots.removeAt(oldIndex)
-        notifyItemRemoved(oldIndex)
+    protected open fun onDocumentRemoved(change: DocumentChange) {
+        val index = snapshots.indexOfFirst { it.id == change.document.id }
+        snapshots.removeAt(index)
+        notifyItemRemoved(index)
     }
 
     protected open fun onError(e: FirebaseFirestoreException) {}

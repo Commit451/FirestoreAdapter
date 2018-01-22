@@ -11,32 +11,25 @@ import com.google.firebase.firestore.Query
  */
 abstract class FirestoreAdapter<out T, VH : RecyclerView.ViewHolder>(private val clazz: Class<T>, queryCreator: QueryCreator) : DocumentSnapshotFirestoreAdapter<VH>(queryCreator) {
 
-    private val items = mutableListOf<T>()
+    private val items = mutableMapOf<String, T>()
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    override fun onDocumentAdded(change: DocumentChange, newIndex: Int) {
-        items.add(newIndex, change.document.toObject(clazz))
-        super.onDocumentAdded(change, newIndex)
+    override fun onDocumentAdded(change: DocumentChange) {
+        items[change.document.id] = change.document.toObject(clazz)
+        super.onDocumentAdded(change)
     }
 
-    override fun onDocumentModified(change: DocumentChange, oldIndex: Int, newIndex: Int) {
-        if (oldIndex == newIndex) {
-            // Item changed but remained in same position
-            items[oldIndex] = change.document.toObject(clazz)
-        } else {
-            // Item changed and changed position
-            items.removeAt(oldIndex)
-            items.add(newIndex, change.document.toObject(clazz))
-        }
-        super.onDocumentModified(change, oldIndex, newIndex)
+    override fun onDocumentModified(change: DocumentChange) {
+        items[change.document.id] = change.document.toObject(clazz)
+        super.onDocumentModified(change)
     }
 
-    override fun onDocumentRemoved(change: DocumentChange, oldIndex: Int) {
-        items.removeAt(oldIndex)
-        super.onDocumentRemoved(change, oldIndex)
+    override fun onDocumentRemoved(change: DocumentChange) {
+        items.remove(change.document.id)
+        super.onDocumentRemoved(change)
     }
 
     override fun clear() {
@@ -45,6 +38,6 @@ abstract class FirestoreAdapter<out T, VH : RecyclerView.ViewHolder>(private val
     }
 
     fun get(index: Int): T {
-        return items[index]
+        return items.values.elementAt(index)
     }
 }
