@@ -1,20 +1,15 @@
 package com.commit451.firestoreadapter.sample
 
-import android.app.ProgressDialog.show
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.support.annotation.NonNull
-import android.support.design.widget.Snackbar
-import android.support.v4.app.FragmentActivity
 import android.view.ViewGroup
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.firestore.*
-import java.lang.reflect.Array.getDouble
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,9 +32,21 @@ class MainActivity : AppCompatActivity() {
         root = findViewById(R.id.root)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitle(R.string.app_name)
+        toolbar.inflateMenu(R.menu.refresh)
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_refresh -> {
+                    adapter.clear()
+                    adapter.stopListening()
+                    adapter.startListening()
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            false
+        }
 
         adapter = ItemAdapter({
-            refStates.limit(10)
+            refStates.limit(20)
                     .orderBy("name")
         })
 
@@ -55,6 +62,10 @@ class MainActivity : AppCompatActivity() {
             val snapshot = adapter.getSnapshot(position)
             incrementPopulation(state, snapshot.reference)
             //shows us waiting for the update
+        }
+        adapter.onClickListener = { position ->
+            Snackbar.make(root, "$position clicked", Snackbar.LENGTH_SHORT)
+                    .show()
         }
 
         val list = findViewById<RecyclerView>(R.id.list)
