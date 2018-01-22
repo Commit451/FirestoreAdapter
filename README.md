@@ -36,10 +36,8 @@ adapter.setupOnScrollListener(list, layoutManager)
 ```
 
 ## Limitations
-- Items added to a collection after queries have been started will always be added to the bottom of the list
- - This is due to the fact that we cannot know which query the document change originates from.
-- If an items position changes in the list, it will not update, only the data will
- - We cannot associate the changed item with the right spot in the list since it differs from the spot in the query
+- Items added to a collection after queries have been started will always be added to the bottom of the list. This is due to the fact that we cannot know which query the document change originates from.
+- If an items position changes in the list, it will not update, only the data will. We cannot associate the changed item with the right spot in the list since it differs from the spot in the query
 
 License
 --------

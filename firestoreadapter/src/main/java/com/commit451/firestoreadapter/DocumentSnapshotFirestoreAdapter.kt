@@ -21,24 +21,13 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
 
     private var hasLoadedAll = false
 
-    private var limit = -1
-
     private var queries = mutableListOf<Query>()
     private var registrations = mutableListOf<ListenerRegistration>()
-
-    init {
-        queries.add(queryCreator.invoke())
-    }
 
     override fun onEvent(documentSnapshots: QuerySnapshot, e: FirebaseFirestoreException?) {
         if (e != null) {
             onError(e)
             return
-        }
-
-        //since we can't get the initial limit count from the query
-        if (limit == -1) {
-            limit = documentSnapshots.documentChanges.size
         }
 
         // Dispatch the event
@@ -52,9 +41,7 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
 
         onDataChanged()
 
-        if (documentSnapshots.isEmpty) {
-            hasLoadedAll = true
-        }
+        hasLoadedAll = documentSnapshots.isEmpty
 
         if (loadingMore) {
             loadingMore = false
@@ -63,6 +50,9 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
     }
 
     fun startListening() {
+        if (queries.isEmpty()) {
+            queries.add(queryCreator.invoke())
+        }
         if (registrations.isEmpty()) {
             queries
                     .forEach {
@@ -80,6 +70,8 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
 
     open fun clear() {
         snapshots.clear()
+        queries.clear()
+        stopListening()
         notifyDataSetChanged()
     }
 

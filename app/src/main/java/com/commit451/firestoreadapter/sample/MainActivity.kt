@@ -10,9 +10,15 @@ import android.util.Log
 import android.view.ViewGroup
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val SORT_NAME = "name"
+        const val SORT_POPULATION = "population"
+    }
 
     private lateinit var root: ViewGroup
     private lateinit var adapter: ItemAdapter
@@ -25,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         firestore.collection("states")
     }
 
+    private var sort = SORT_NAME
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,11 +41,18 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitle(R.string.app_name)
         toolbar.inflateMenu(R.menu.refresh)
+        toolbar.inflateMenu(R.menu.sort)
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_refresh -> {
                     adapter.clear()
-                    adapter.stopListening()
+                    adapter.startListening()
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.action_sort -> {
+                    if (sort == SORT_NAME) sort = SORT_POPULATION else sort = SORT_NAME
+                    snackbar("Sorting by $sort")
+                    adapter.clear()
                     adapter.startListening()
                     return@setOnMenuItemClickListener true
                 }
@@ -47,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter = ItemAdapter({
             refStates.limit(10)
+                    .orderBy(sort, Query.Direction.ASCENDING)
         })
 
         adapter.onDeleteListener = { position ->
