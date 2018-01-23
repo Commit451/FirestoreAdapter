@@ -42,6 +42,9 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
         onDataChanged()
 
         hasLoadedAll = documentSnapshots.isEmpty
+        if (hasLoadedAll) {
+            onHasLoadedAll?.invoke()
+        }
 
         if (loadingMore) {
             loadingMore = false
