@@ -22,12 +22,13 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
-    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.cardview:cardview:1.0.0"
 
-    implementation "com.google.firebase:firebase-core:$googleServicesVersion"
+    implementation "com.google.android.material:material:1.0.0"
+
+    implementation "com.google.firebase:firebase-core:16.0.3"
 
     implementation project(':firestoreadapter')
 }
