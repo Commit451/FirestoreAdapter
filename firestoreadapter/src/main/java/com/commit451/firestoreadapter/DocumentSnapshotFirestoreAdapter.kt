@@ -1,7 +1,7 @@
 package com.commit451.firestoreadapter
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.*
 
 /**
@@ -24,8 +24,8 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
     private var queries = mutableListOf<Query>()
     private var registrations = mutableListOf<ListenerRegistration>()
 
-    override fun onEvent(documentSnapshots: QuerySnapshot, e: FirebaseFirestoreException?) {
-        if (e != null) {
+    override fun onEvent(documentSnapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
+        if (e != null || documentSnapshots == null) {
             onError(e)
             return
         }
@@ -106,13 +106,13 @@ abstract class DocumentSnapshotFirestoreAdapter<VH : RecyclerView.ViewHolder>(pr
         notifyItemRemoved(index)
     }
 
-    protected open fun onError(e: FirebaseFirestoreException) {}
+    protected open fun onError(e: FirebaseFirestoreException?) {}
 
     protected open fun onDataChanged() {}
 
     fun setupOnScrollListener(recyclerView: RecyclerView, layoutManager: LinearLayoutManager): RecyclerView.OnScrollListener {
         val onScrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount

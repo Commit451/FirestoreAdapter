@@ -1,13 +1,13 @@
 package com.commit451.firestoreadapter.sample
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter = ItemAdapter({
             refStates.limit(10)
-                    .orderBy(sort, Query.Direction.ASCENDING)
+                .orderBy(sort, Query.Direction.ASCENDING)
         })
 
         adapter.onDeleteListener = { position ->
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
         adapter.onClickListener = { position ->
             Snackbar.make(root, "$position clicked", Snackbar.LENGTH_SHORT)
-                    .show()
+                .show()
         }
 
         val list = findViewById<RecyclerView>(R.id.list)
@@ -117,33 +117,33 @@ class MainActivity : AppCompatActivity() {
 
     fun snackbar(string: String) {
         Snackbar.make(root, string, Snackbar.LENGTH_SHORT)
-                .show()
+            .show()
     }
 
     fun incrementPopulation(state: State, docRef: DocumentReference) {
-        firestore.runTransaction({ transaction ->
+        firestore.runTransaction { transaction ->
             val snapshot = transaction.get(docRef)
             val newPopulation = snapshot.getDouble("population")!! + 1
             transaction.update(docRef, "population", newPopulation)
 
             // Success
             null
-        }).addOnSuccessListener({
+        }.addOnSuccessListener {
             log("Transaction success!")
-        }).addOnFailureListener({ e ->
+        }.addOnFailureListener { e ->
             e.printStackTrace()
             snackbar("Failed to increment ${state.name}")
-        })
+        }
     }
 
     fun delete(state: State, docRef: DocumentReference) {
         docRef.delete()
-                .addOnSuccessListener({
-                    log("Transaction success!")
-                })
-                .addOnFailureListener({ e ->
-                    e.printStackTrace()
-                    snackbar("Failed to delete ${state.name}")
-                })
+            .addOnSuccessListener {
+                log("Transaction success!")
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+                snackbar("Failed to delete ${state.name}")
+            }
     }
 }

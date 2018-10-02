@@ -26,7 +26,7 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    api "com.google.firebase:firebase-firestore:$googleServicesVersion"
+    api "com.google.firebase:firebase-firestore:17.1.0"
 
-    api "com.android.support:recyclerview-v7:$supportLibVersion"
+    api "androidx.recyclerview:recyclerview:1.0.0"
 }
